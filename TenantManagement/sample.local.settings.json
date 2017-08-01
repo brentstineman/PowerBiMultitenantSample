@@ -1,0 +1,16 @@
+{
+    "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "",
+    "AzureWebJobsDashboard": "",
+    "authorityUrl": "https://login.windows.net/common/oauth2/authorize",
+    "apiUrl": "https://api.powerbi.com/",
+    "powerbiresourceUrl": "https://analysis.windows.net/powerbi/api",
+    "graphresourceUrl": "https://graph.microsoft.com/",
+    "client_id": "",
+    "client_secret": "",
+    "powerbi_user": "",
+    "powerbi_password": "",
+    "AzureADTenantID": ""
+  }
+}

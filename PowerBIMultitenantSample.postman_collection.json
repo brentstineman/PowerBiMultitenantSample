@@ -1,0 +1,117 @@
+{
+	"variables": [],
+	"info": {
+		"name": "PowerBIMultitenantSample",
+		"_postman_id": "6c83ad94-bce3-af41-8806-767509e73b58",
+		"description": "Testing methods to interact with the PowerBI Multitenant Demo Functions Application. ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Workspaces",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/GetAppWorkspaces?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"GetAppWorkspaces"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Create App Workspace",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/CreateAppWorkspace?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"CreateAppWorkspace"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \"name\" : \"myworkspace4\" }"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Add Report to Workspace",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/AddReport/{{workspaceid}}?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"AddReport",
+						"{{workspaceid}}"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"samplereport1\",\n\t\"report\" : \"azuresqldb.pbix\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"database\" : \"sampledatabase\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
