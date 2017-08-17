@@ -46,7 +46,7 @@ namespace TenantManagement
                     var workspace = PBIEHelper.GetAppWorkspaceByNameAsync(workspacename).Result;
                     rtnResponse = (workspace != null)
                         ? req.CreateResponse(HttpStatusCode.OK, JsonConvert.SerializeObject(workspace))
-                        : req.CreateResponse(HttpStatusCode.BadRequest, @"An unexpected http error occured. An App Workspace of the name you specified may already existspecified already exist? Did it contain invalid characters? body of your request: { ""name"" : ""myname"" }");
+                        : req.CreateResponse(HttpStatusCode.BadRequest, @"An unexpected http error occured. An App Workspace of the name you specified may already exist. Did it contain invalid characters?");
                 }
             }
 

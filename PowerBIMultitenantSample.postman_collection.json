@@ -112,6 +112,82 @@
 				"description": ""
 			},
 			"response": []
+		},
+		{
+			"name": "Create Database",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/CreateDatabase?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"CreateDatabase"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\t\"databasename\" : \"myworkspace4\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"database\" : \"master\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Update Database",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/CreateDatabase?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"CreateDatabase"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\t\"databasename\" : \"myworkspace4\",\n\t\"server\" : \"localhost\",\n\t\"database\" : \"master\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }
