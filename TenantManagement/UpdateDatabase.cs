@@ -12,17 +12,11 @@ namespace TenantManagement
 {
     public class UpdateDatabaseRequest
     {
-        public class Credentials
-        {
-            public string userid { get; set; }
-            public string password { get; set; }
-        }
-
-        public string databasename { get; set; }
+        public string database { get; set; }
         public string workspaceId { get; set; }
         public string reportId { get; set; }
         public string server { get; set; }
-        public Credentials credentials { get; set; }
+        public UserCredentials credentials { get; set; }
     }
 
     public static class UpdateDatabase
@@ -44,14 +38,9 @@ namespace TenantManagement
                 
                 rtnResponse = req.CreateResponse(HttpStatusCode.OK);
             }
-            catch (RuntimeBinderException)
-            {
-                //  "name property doesn't exist in request body
-                rtnResponse = req.CreateResponse(HttpStatusCode.BadRequest, @"Please pass the database name in the body of your request: { ""name"" : ""myname"", ""connectionstring"" : ""value"" }");
-            }
             catch (AggregateException ex)
             {
-                rtnResponse = req.CreateResponse(HttpStatusCode.BadRequest, @"An unexpected http error occured. A database of the name you specified may already exist, the connection details are invalid, or perhaps the values contained invalid characters");
+                rtnResponse = req.CreateResponse(HttpStatusCode.BadRequest, $"An unexpected http error occured. A database of the name you specified may already exist, the connection details are invalid, or perhaps the values contained invalid characters. Details: {ex.Message}");
             }
 
             return rtnResponse;

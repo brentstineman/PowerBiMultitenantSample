@@ -18,7 +18,7 @@ namespace TenantManagement
             log.Info("GetAppWorkspaces processed a request.");
 
             // get a list of workspaces the application user has access too
-            var workspaces = PBIEHelper.GetAppWorkspacesAsync().Result;
+            var workspaces = await PBIEHelper.GetAppWorkspacesAsync();
 
             // convert the list to JSON
             var result = JsonConvert.SerializeObject(workspaces); 

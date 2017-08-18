@@ -115,26 +115,42 @@ namespace TenantManagement
             }
         }
 
-        public static async Task<IEnumerable<Gateway>> GetWorkspaceGatewaysAsync()
+        public static async Task<Gateway> GetWorkspaceGatewaysAsync(string gatewayName)
         {
+            Gateway returnVal = null; 
+
+            if (string.IsNullOrEmpty(gatewayName))
+            {
+                throw new ArgumentException("no gateway name specified on the request . Value is required");
+            }
+
             using (PowerBIClient client = await CreateClient())
             {
-                ODataResponseListGateway response = await client.Gateways.GetGatewaysAsync();
-                return response.Value;
+                ODataResponseListGateway gateways = await client.Gateways.GetGatewaysAsync();
+
+                IEnumerable<Gateway> gatewayquery = gateways.Value.Where(x => x.Name.Contains(gatewayName));
+
+                try
+                {
+                    returnVal = gatewayquery.First();
+                }
+                catch(InvalidOperationException ex)
+                {
+                    throw new ArgumentException($"Specified gateway '{gatewayName}' not found. Please check the name of the gateway and try again. Details: {ex.Message}");
+                }
+
+                return returnVal;
             }
         }
 
-        private static CredentialDetails GetCredentialDetails(GatewayPublicKey gatewayPublicKey)
+        private static CredentialDetails GetCredentialDetails(GatewayPublicKey gatewayPublicKey, string userName, string Password)
         {
-            string username = ConfigurationManager.AppSettings["sqlUserName"];
-            string password = ConfigurationManager.AppSettings["sqlPassword"];
-
             // build credential object
             var credentialDetails = new CredentialDetails()
             {
                 CredentialType = "Basic",
                 EncryptionAlgorithm = "RSA-OAEP",
-                Credentials = AsymmetricKeyEncryptionHelper.EncodeCredentials(username, password, gatewayPublicKey),
+                Credentials = AsymmetricKeyEncryptionHelper.EncodeCredentials(userName, Password, gatewayPublicKey),
                 EncryptedConnection = "Encrypted",
                 PrivacyLevel = "None"
             };
@@ -142,35 +158,19 @@ namespace TenantManagement
             return credentialDetails;
         }
 
-        public static async Task<GatewayDatasource> CreateDatasourceAsync(string databaseName)
+        public static async Task<GatewayDatasource> CreateGatewayDatasourceAsync(Gateway gateway, string server, string databaseName, UserCredentials credentials)
         {
-            string gatewayName = ConfigurationManager.AppSettings["datasourceGatewayName"];
-
-            // get data gatway's public key. Assuming gateway is first and only
-            IEnumerable<Gateway> gateways = await GetWorkspaceGatewaysAsync();
-            // filter gateway list
-            // TODO: use something more exact then "contains" to get the right gateway
-            IEnumerable<Gateway> gatewayquery = gateways.Where(x => x.Name.Contains(gatewayName));
-            // get gateway we're after
-            Gateway gateway = gatewayquery.FirstOrDefault<Gateway>();
 
             PublishDatasourceToGatewayRequest publishDatasourceRequest = new PublishDatasourceToGatewayRequest()
             {
                 DataSourceName = databaseName,
                 DataSourceType = "SQL",
-                ConnectionDetails = "{ \"server\":\"" + ConfigurationManager.AppSettings["datasourceServerName"] + "\"," + "\"database\":\"" + databaseName + "\"}",
-                CredentialDetails = GetCredentialDetails(gateway.PublicKey)
+                ConnectionDetails = "{ \"server\":\"" + server + "\"," + "\"database\":\"" + databaseName + "\"}",
+                CredentialDetails = GetCredentialDetails(gateway.PublicKey, credentials.userid, credentials.password)
             };
 
             using (var client = await CreateClient())
             {
-                IEnumerable<GatewayDatasource> datasources = await GetGatewayDatasourcesAsync(gateway.Id); // get datasources associated with teh current gateway
-                // TODO: use something more exact then "contains" to get the right gateway
-                IEnumerable<GatewayDatasource> datasourceQuery = datasources.Where(x => x.DatasourceName.Contains(databaseName));
-                // If we have a datasource that matches our name, return that datasource, don't create a new one
-                if (datasourceQuery.Count<GatewayDatasource>() > 0)
-                    return datasourceQuery.FirstOrDefault<GatewayDatasource>();
-
                 GatewayDatasource rtnGatewayDatasource = await client.Gateways.CreateDatasourceAsync(gateway.Id, publishDatasourceRequest);
 
                 return rtnGatewayDatasource;
@@ -179,9 +179,7 @@ namespace TenantManagement
 
         public static void UpdateDataSetConnectionString(string workspaceId, string datasetId, AddReportRequest requestparameters)
         {
-            ConnectionDetails connectionDetails = new ConnectionDetails($"data source={requestparameters.server};initial catalog={requestparameters.database};persist security info=True;encrypt=True;trustservercertificate=False;");
-            if (requestparameters.server.Contains("database.windows.net"))
-                connectionDetails.ConnectionString = connectionDetails.ConnectionString + $"Uid={requestparameters.credentials.userid};Pwd={requestparameters.credentials.password}";
+            ConnectionDetails connectionDetails = new ConnectionDetails($"Data Source={requestparameters.server};Initial Catalog={requestparameters.database}");
 
             using (PowerBIClient client = CreateClient().Result)
             {
@@ -231,7 +229,17 @@ namespace TenantManagement
             }
         }
 
-        public static async Task<IEnumerable<Dataset>> GetDatasetsByppWorkspaceAsync(string workspaceId)
+        public static async Task<IEnumerable<GatewayDatasource>> GetGatewayDataSourcesAsync(string workspaceId, string datasetId)
+        {
+            using (PowerBIClient client = await CreateClient())
+            {
+                ODataResponseListGatewayDatasource response = await client.Datasets.GetGatewayDatasourcesInGroupAsync(workspaceId, datasetId);
+
+                return response.Value;
+            }
+        }
+
+        public static async Task<IEnumerable<Dataset>> GetDatasetsByAppWorkspaceAsync(string workspaceId)
         {
             using (PowerBIClient client = await CreateClient())
             {

@@ -68,7 +68,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{ \"name\" : \"myworkspace4\" }"
+					"raw": "{ \"name\" : \"finaltest\" }"
 				},
 				"description": ""
 			},
@@ -107,7 +107,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"name\": \"samplereport1\",\n\t\"report\" : \"azuresqldb.pbix\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"database\" : \"sampledatabase\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+					"raw": "{\n\t\"name\": \"finaltest\",\n\t\"report\" : \"sqlserver.pbix\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"database\" : \"sampledatabase\",\n\t\"gatewayname\": \"{{gatewayname}}\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
 				},
 				"description": ""
 			},
@@ -145,7 +145,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{ \n\t\"databasename\" : \"myworkspace4\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"database\" : \"master\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+					"raw": "{ \n\t\"database\" : \"finaltest\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
 				},
 				"description": ""
 			},
@@ -155,13 +155,13 @@
 			"name": "Update Database",
 			"request": {
 				"url": {
-					"raw": "{{hosturl}}/api/CreateDatabase?code={{DefaultHostKeyKey}}",
+					"raw": "{{hosturl}}/api/UpdateDatabase?code={{DefaultHostKeyKey}}",
 					"host": [
 						"{{hosturl}}"
 					],
 					"path": [
 						"api",
-						"CreateDatabase"
+						"UpdateDatabase"
 					],
 					"query": [
 						{
@@ -183,7 +183,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{ \n\t\"databasename\" : \"myworkspace4\",\n\t\"server\" : \"localhost\",\n\t\"database\" : \"master\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
+					"raw": "{ \n\t\"database\" : \"finaltest\",\n\t\"workspaceId\" : \"{{workspaceid}}\",\n\t\"reportId\" : \"23e6b6d3-8189-4398-b12f-988c0eeb0da3\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
 				},
 				"description": ""
 			},
