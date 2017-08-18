@@ -115,6 +115,16 @@ namespace TenantManagement
             }
         }
 
+        public static async Task DeleteReportAsync(string workspaceId, string reportId)
+        {
+            using (PowerBIClient client = await CreateClient())
+            {
+                Report selectedReport = await client.Reports.GetReportInGroupAsync(workspaceId, reportId);
+
+                var tmp = await client.Datasets.DeleteDatasetByIdInGroupAsync(workspaceId, selectedReport.DatasetId);
+            }
+        }
+
         public static async Task<Gateway> GetWorkspaceGatewaysAsync(string gatewayName)
         {
             Gateway returnVal = null; 

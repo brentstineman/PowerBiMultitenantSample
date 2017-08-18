@@ -78,14 +78,14 @@
 			"name": "Add Report to Workspace",
 			"request": {
 				"url": {
-					"raw": "{{hosturl}}/api/AddReport/{{workspaceid}}?code={{DefaultHostKeyKey}}",
+					"raw": "{{hosturl}}/api/{{workspaceid}}/Reports?code={{DefaultHostKeyKey}}",
 					"host": [
 						"{{hosturl}}"
 					],
 					"path": [
 						"api",
-						"AddReport",
-						"{{workspaceid}}"
+						"{{workspaceid}}",
+						"Reports"
 					],
 					"query": [
 						{
@@ -186,6 +186,37 @@
 					"raw": "{ \n\t\"database\" : \"finaltest\",\n\t\"workspaceId\" : \"{{workspaceid}}\",\n\t\"reportId\" : \"23e6b6d3-8189-4398-b12f-988c0eeb0da3\",\n\t\"server\" : \"asampleserver.database.windows.net\",\n\t\"credentials\" : {\n\t\t\"userid\" : \"{{user}}\",\n\t\t\"password\": \"{{password}}\"\n\t}\n}"
 				},
 				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Report",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/{{workspaceid}}/Reports/{{reportid}}?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"{{workspaceid}}",
+						"Reports",
+						"{{reportid}}"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"description": "Removes a report and its datasets"
 			},
 			"response": []
 		}
