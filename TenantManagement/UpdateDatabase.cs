@@ -12,7 +12,6 @@ namespace TenantManagement
 {
     public class UpdateDatabaseRequest
     {
-        public string database { get; set; }
         public string workspaceId { get; set; }
         public string reportId { get; set; }
         public string server { get; set; }
@@ -22,19 +21,18 @@ namespace TenantManagement
     public static class UpdateDatabase
     {
         [FunctionName("UpdateDatabase")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "database/{databasename}")]HttpRequestMessage req, string databasename, TraceWriter log)
         {
             log.Info("UpdateDatabase processed a request.");
 
             HttpResponseMessage rtnResponse = null;
-            string workspacename = string.Empty;
 
             try
             {
                 // Get request body
                 UpdateDatabaseRequest requestparameters = await req.Content.ReadAsAsync<UpdateDatabaseRequest>();
 
-                SQLHelper.PopulateCustomerDB(requestparameters);
+                SQLHelper.PopulateCustomerDB(databasename, requestparameters);
                 
                 rtnResponse = req.CreateResponse(HttpStatusCode.OK);
             }

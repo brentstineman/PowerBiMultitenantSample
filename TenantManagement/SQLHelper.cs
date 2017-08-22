@@ -75,14 +75,14 @@ namespace TenantManagement
             }
         }
 
-        public static void PopulateCustomerDB(UpdateDatabaseRequest requestParams)
+        public static void PopulateCustomerDB(string databasename, UpdateDatabaseRequest requestParams)
         {
-            using (SqlConnection connection = CreateSQLConnection(requestParams.server, requestParams.database, requestParams.credentials))
+            using (SqlConnection connection = CreateSQLConnection(requestParams.server, databasename, requestParams.credentials))
             {
                 connection.Open();
 
                 // populate table
-                var insertQuery = string.Format(queryInsertIntoTable, requestParams.workspaceId, requestParams.reportId, requestParams.database);
+                var insertQuery = string.Format(queryInsertIntoTable, requestParams.workspaceId, requestParams.reportId, databasename);
                 SqlCommand cmd = new SqlCommand(insertQuery, connection);
                 cmd.ExecuteNonQueryAsync().Wait();
 

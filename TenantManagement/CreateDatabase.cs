@@ -22,7 +22,7 @@ namespace TenantManagement
     public static class CreateDatabase
     {
         [FunctionName("CreateDatabase")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "database")]HttpRequestMessage req, TraceWriter log)
         {
             log.Info("CreateDatabase processed a request.");
 

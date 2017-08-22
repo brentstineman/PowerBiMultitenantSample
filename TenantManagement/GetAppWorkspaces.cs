@@ -13,7 +13,7 @@ namespace TenantManagement
     public static class GetAppWorkspaces
     {
         [FunctionName("GetAppWorkspaces")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "workspace")]HttpRequestMessage req, TraceWriter log)
         {
             log.Info("GetAppWorkspaces processed a request.");
 

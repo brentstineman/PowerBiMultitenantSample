@@ -15,7 +15,7 @@ namespace TenantManagement
     public static class CreateAppWorkspace
     {
         [FunctionName("CreateAppWorkspace")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]HttpRequestMessage req, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "workspace")]HttpRequestMessage req, TraceWriter log)
         {
             log.Info("CreateAppWorkspace processed a request.");
 
