@@ -18,7 +18,7 @@ namespace TenantManagement
         {
             log.Info("DeleteReport function processed a request.");
 
-            HttpResponseMessage returnResponse = req.CreateResponse(HttpStatusCode.OK); ;
+            HttpResponseMessage returnResponse = req.CreateResponse(HttpStatusCode.OK);
 
             try
             {

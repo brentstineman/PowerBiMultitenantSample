@@ -215,8 +215,12 @@ namespace TenantManagement
             string clientId = ConfigurationManager.AppSettings["client_id"];
             string clientSecret = ConfigurationManager.AppSettings["client_secret"];
 
+            string userid = ConfigurationManager.AppSettings["powerbi_user"];
+            string password = ConfigurationManager.AppSettings["powerbi_password"];
+
+
             // Create a user password cradentials.
-            var credential = new UserPasswordCredential(ConfigurationManager.AppSettings["powerbi_user"], ConfigurationManager.AppSettings["powerbi_password"]);
+            var credential = new UserPasswordCredential(userid, password);
 
             // Authenticate using created credentials
             var authenticationContext = new AuthenticationContext(authorityUrl);
@@ -259,6 +263,46 @@ namespace TenantManagement
 
                 ODataResponseListDatasource response3 = await client.Datasets.GetDatasourcesInGroupAsync(workspaceId, response.Value[0].Id);;
 
+                return response.Value;
+            }
+        }
+
+        public class EmbeddedReportSettings
+        {
+            public string ReportId;
+            public string URL;
+            public EmbedToken Token;
+        }
+
+        public static async Task<EmbeddedReportSettings> GetEmbeddedReportSettings(string workspaceId, string reportId)
+        {
+            using (PowerBIClient client = await CreateClient())
+            {
+                // get report details
+                Report report = await client.Reports.GetReportInGroupAsync(workspaceId, reportId);
+
+                // Generate Embed Token.
+                var generateTokenRequestParameters = new GenerateTokenRequest(accessLevel: "view");
+                EmbedToken tokenResponse = await client.Reports.GenerateTokenInGroupAsync(workspaceId, reportId, generateTokenRequestParameters);
+
+                // Generate Embed Configuration.
+                var embedConfig = new EmbeddedReportSettings()
+                {
+                    Token = tokenResponse,
+                    URL = report.EmbedUrl,
+                    ReportId = report.Id
+                };
+
+                return embedConfig;
+            }
+        }
+
+
+        public static async Task<IEnumerable<Report>> GetReportsInWorkspace(string workspaceId)
+        {
+            using (PowerBIClient client = await CreateClient())
+            {
+                ODataResponseListReport response = await client.Reports.GetReportsInGroupAsync(workspaceId);
                 return response.Value;
             }
         }
