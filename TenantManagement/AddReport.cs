@@ -28,7 +28,7 @@ namespace TenantManagement
     {
         [FunctionName("AddReport")]
 
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "workspace/{workspaceid}/Reports")]HttpRequestMessage req, string workspaceId, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = "workspace/{workspaceid}/reports")]HttpRequestMessage req, string workspaceId, TraceWriter log)
         {
             log.Info("AddReport function processed a request.");
 
