@@ -221,6 +221,38 @@
 				"description": "Removes a report and its datasets"
 			},
 			"response": []
+		},
+		{
+			"name": "Get Embedded Report Settings",
+			"request": {
+				"url": {
+					"raw": "{{hosturl}}/api/workspace/{{workspaceid}}/Reports/{{reportid}}?code={{DefaultHostKeyKey}}",
+					"host": [
+						"{{hosturl}}"
+					],
+					"path": [
+						"api",
+						"workspace",
+						"{{workspaceid}}",
+						"Reports",
+						"{{reportid}}"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "{{DefaultHostKeyKey}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "Gets the embedded settings for a report"
+			},
+			"response": []
 		}
 	]
 }
