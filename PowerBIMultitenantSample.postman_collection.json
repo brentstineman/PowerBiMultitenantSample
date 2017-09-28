@@ -78,13 +78,14 @@
 			"name": "Add Report to Workspace",
 			"request": {
 				"url": {
-					"raw": "{{hosturl}}/api/workspace{{workspaceid}}/reports?code={{DefaultHostKeyKey}}",
+					"raw": "{{hosturl}}/api/workspace/{{workspaceid}}/reports?code={{DefaultHostKeyKey}}",
 					"host": [
 						"{{hosturl}}"
 					],
 					"path": [
 						"api",
-						"workspace{{workspaceid}}",
+						"workspace",
+						"{{workspaceid}}",
 						"reports"
 					],
 					"query": [
