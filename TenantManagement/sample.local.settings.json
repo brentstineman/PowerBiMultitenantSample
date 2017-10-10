@@ -2,6 +2,7 @@
     "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "",
+    "reportContainer": "",
     "AzureWebJobsDashboard": "",
     "authorityUrl": "https://login.windows.net/common/oauth2/authorize",
     "apiUrl": "https://api.powerbi.com/",
