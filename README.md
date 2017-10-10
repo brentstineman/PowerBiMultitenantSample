@@ -30,7 +30,7 @@ Currently, the solution only supports reports that are doing live queries agains
 ## Setting up an environment
 *pending*
 
-## Settng up the project
+## Setting up the project
 Once you've cloned this repository locally, you should be able to open it using Visual Studio 2017. As previously mentioned, the project uses the new Azure Function SDK so you'll need to make sure you've updated VS and have the function SDK installed. Easiest way to do this is to open up Visual Studio and try to create a Function Project. If its not listed, make sure to update Visual Studio and once complete, make sure the Azure Functions and Web Jobs Tools is installed under "Extensions and Updates". 
 
 With that out of the way, the project should build successfully. If it fails to build, that may be due to updates required to the Nuget packages. If you encounter this, please either fix it and submit a pull request, or at least drop me a message to alert me to the issue. 
