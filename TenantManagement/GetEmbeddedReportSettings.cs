@@ -14,7 +14,7 @@ namespace TenantManagement
     public static class GetEmbeddedReportSettings
     {
         [FunctionName("GetEmbeddedReportSettings")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "workspace/{workspaceid}/reports/{reportId}")]HttpRequestMessage req, string workspaceId, string reportId, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "workspaces/{workspaceid}/reports/{reportId}")]HttpRequestMessage req, string workspaceId, string reportId, TraceWriter log)
         {
             log.Info("GetEmbeddedReportSettings function processed a request.");
 

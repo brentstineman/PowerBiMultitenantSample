@@ -14,7 +14,7 @@ namespace TenantManagement
     public static class DeleteReport
     {
         [FunctionName("DeleteReport")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "workspace/{workspaceid}/Reports/{reportId}")]HttpRequestMessage req, string workspaceId, string reportId, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "delete", Route = "workspaces/{workspaceid}/Reports/{reportId}")]HttpRequestMessage req, string workspaceId, string reportId, TraceWriter log)
         {
             log.Info("DeleteReport function processed a request.");
 

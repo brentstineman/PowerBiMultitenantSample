@@ -12,7 +12,7 @@ namespace TenantManagement
     public static class GetReportsByWorkspace
     {
         [FunctionName("GetReportsByWorkspace")]
-        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "workspace/{workspaceid}/Reports")]HttpRequestMessage req, string workspaceId, TraceWriter log)
+        public static async Task<HttpResponseMessage> Run([HttpTrigger(AuthorizationLevel.Function, "get", Route = "workspaces/{workspaceid}/Reports")]HttpRequestMessage req, string workspaceId, TraceWriter log)
         {
             log.Info("GetReportsByWorkspace processed a request.");
 

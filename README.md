@@ -1,16 +1,14 @@
 # PowerBiMultitenantSample
-A sample solution for doing multi-tenant PowerBI report management. 
+This project uses a collection of Azure Functions to illustrate common tasks when dealing with Power BI report management. Tasks such as importing reports, creating app workspaces, and changing report connection details are integral when dealing with the multi-tenancy challenges of using PowerBi Embedded reports in applications.
 
-This project uses a collection of Azure Functions to illustrate common tasks when dealing with Power BI report management. Tasks such as importing reports, creating app workspaces, and changing report connection details. Its part of a larger effort to highlight a way of dealing with multi-tenancy challenges when using PowerBi Embedded reports in applications.
-
-The intent of this project is to provide an easily reusable APi that you can leverage as part of your own applications. Hopefully, most of the code can simply be deployed and used "as is", but you are welcome to just copy the code you need for your specific implementation. 
+The intent of this project is to provide a reusable APi that you can leverage as part of your own applications. Hopefully, most of the code can simply be deployed and used "as is", but you are welcome to just copy the code you need for your specific implementation. 
 
 ##  The Approach
-If you are building a multi-tenant web application and want to use PowerBI reports to show your end users data, you will quickly realize you have a challenge in ensuring that your reports only display the data appropriate to the user. Currently, PowerBI does not easily support this, so you are stuck keeping multiple copies of each report.  
+If you are building a multi-tenant web application and want to use PowerBI reports to display information to your end users, you will eventually realize you have a challenge in ensuring that your reports only display the data appropriate to the requesting user. Currently, PowerBI does not easily support this.
 
-This solution is based on the ability to change the conneciton details of reports that leverage live query and either SQL Server (via a data gateway) or Azure SQL DB. The overall approach is that each organization/tenant that's using your application would have its own Power BI App Workspace. In these app workspaces would be reports with connection details specific to the tenant. Be by connecting to seperate databases, or leveraging row level filtering and a tenant specific username/password. 
+This solution is based on the ability to change the connection details of reports using live query and either SQL Server (via a data gateway) or Azure SQL DB. The overall approach is that each organization/tenant that's using your application would have its own Power BI App Workspace. In these app workspaces would be reports with connection details specific to the tenant. Either connecting to seperate databases, or leveraging row level filtering and a tenant specific database username/password. 
 
-The API created by this function allows you to create workspaces, import template PBIX files into those workspaces, and update the report connection details. Thus making this approach to tenant report management easily reusable. Additionally, the API includes a few methods to help manage databases (either in SQL Server of SQL DB) as well as a few supporting methods (get workspaces, get reports, get embedded report details).
+The API created by this projects allows you to create workspaces, import template PBIX files into those workspaces, and update the report connection details. Thus making this approach to tenant report management easily reusable. Additionally, the API includes a few methods to help manage databases (either in SQL Server of SQL DB) as well as a few supporting methods (get workspaces, get reports, get embedded report details).
 
 ## API Overview
 These functions have been implemented in a way to create a API footprint. These API methods are as follows:
@@ -40,7 +38,6 @@ Currently, the solution only supports reports that are doing live queries agains
 ## Setting up an environment
 While this project is based on using the local runtime for Azure Functions, it is still dependent on the online Power BI environment. We also take a dependency on Azure AD and an Azure Storage account (to store our reports). So before we can actually leverage the functions, we first need to set up these online components. 
 
-### Power BI Environment Setup
 To work with the Power BI API, we need to set up both an Azure AD user and an Application (as of this post, the Power BI SDK does not support Azure style service tokens). I'll refer to these as the User Principle and Application Principle to help keep them straight. Additionally, while this repository provides its own walkthrough, you can find additional information/details by going to the official documentation. Two links I've found most useful are the [Embedded dashboards (for developers)](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embed-sample-app-owns-data/) and [Embedding reports when the application owns the data](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embedding-content/).
 
 First, we need to create an [Azure AD User Principle (username/password)](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embedding-content/#step-1-setup-your-embedded-analytics-development-environment). For this we'll need an Active Directory Tenant. If you have a subscription to Azure or Office 365, you already have one. But you'll also need administrative access since we need to create a new user ID in that tenant. 
