@@ -6,53 +6,56 @@ The intent of this project is to provide a reusable APi that you can leverage as
 ##  The Approach
 If you are building a multi-tenant web application and want to use PowerBI reports to display information to your end users, you will eventually realize you have a challenge in ensuring that your reports only display the data appropriate to the requesting user. Currently, PowerBI does not easily support this.
 
-This solution is based on the ability to change the connection details of reports using live query and either SQL Server (via a data gateway) or Azure SQL DB. The overall approach is that each organization/tenant that's using your application would have its own Power BI App Workspace. In these app workspaces would be reports with connection details specific to the tenant. Either connecting to seperate databases, or leveraging row level filtering and a tenant specific database username/password. 
+This solution is based on the ability to change the connection details of Power BI reports that are using live query and either SQL Server (via a data gateway) or Azure SQL DB. The overall approach is that each organization/tenant that's using your application would have its own Power BI App Workspace (this provides security/management boundaries). In the app workspaces would be reports with connection details specific to the tenant. Those details would either connect to seperate databases, or leveraging row level filtering and a tenant specific database username/password. 
 
-The API created by this projects allows you to create workspaces, import template PBIX files into those workspaces, and update the report connection details. Thus making this approach to tenant report management easily reusable. Additionally, the API includes a few methods to help manage databases (either in SQL Server of SQL DB) as well as a few supporting methods (get workspaces, get reports, get embedded report details).
+This project uses Azure Functions to expose a REST based API that allows you to create workspaces, import template PBIX files into those workspaces, and update the report connection details. Thus making this approach to tenant report management easily reusable. Additionally, the API includes a few methods to help manage databases (either in SQL Server of SQL DB) as well as a few supporting methods (get workspaces, get reports, get embedded report details).
 
 ## API Overview
-These functions have been implemented in a way to create a API footprint. These API methods are as follows:
+The Azure functions that comprise this project have been implemented in a way to create a single/unified API. Each function is its own API method. The API methods are as follows (bracketed values indicate variables):
 
-Post /api/workspace : creates a new app workspace
+**Post** /api/workspaces : creates a new app workspace
 
-Get /apiworkspace : get a list of existing workspaces
+**Get** /api/workspaces : get a list of existing workspaces
 
-Post /api/workspace/\<workspaceid\>/reports : add/import a report to a workspace
+**Post** /api/workspaces/\<workspaceid\>/reports : add/import a report to a workspace
 
-Get /api/workspace/\<workspaceid\>/reports : get a list of reports in a workspace
+**Get** /api/workspaces/\<workspaceid\>/reports : get a list of reports in a workspace
 
-Del /api/workspace/\<workspaceid\>/reports/\<reportid\> : remove a report from a workspace
+**Del** /api/workspaces/\<workspaceid\>/reports/\<reportid\> : remove a report from a workspace
 
-Get /api/workspace/\<workspaceid\>/reports/\<reportid\> : get embedded settings for a report
+**Get** /api/workspaces/\<workspaceid\>/reports/\<reportid\> : get embedded settings for a report
 
-Additionally, there's a series of related database APIs that were created to help demonstrate the solution.
+Additionally, there's a couple of related database APIs that were created to help demonstrate the solution.
 
-Post /api/database : create a database
+**Post** /api/database : create a database
 
-Post /api/database/\<databasename/> : update the database, adding values into the table we created for our report
+**Post** /api/database/\<databasename/> : update the database, adding values into the table we created for our report
 
 Unless you're using this sample in conjuntion with its sister blog post, you likely won't need these methods. However, they are provided here out of simplicity. 
 
 Currently, the solution only supports reports that are doing live queries against Azure SQL or SQL Server. The hope is that should this soluiton prove useful, it will be extended to support other data stores.
 
 ## Setting up an environment
-While this project is based on using the local runtime for Azure Functions, it is still dependent on the online Power BI environment. We also take a dependency on Azure AD and an Azure Storage account (to store our reports). So before we can actually leverage the functions, we first need to set up these online components. 
+While this project is based on Azure Functions (and uses the local runtime), it is still dependent on the online Power BI environment and some other online components. It also takes a dependency on Azure AD, Azure Storage (to store report PBIX files), and a SQL database. Before you can leverage the functions, you first need to set up these online components. 
 
-To work with the Power BI API, we need to set up both an Azure AD user and an Application (as of this post, the Power BI SDK does not support Azure style service tokens). I'll refer to these as the User Principle and Application Principle to help keep them straight. Additionally, while this repository provides its own walkthrough, you can find additional information/details by going to the official documentation. Two links I've found most useful are the [Embedded dashboards (for developers)](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embed-sample-app-owns-data/) and [Embedding reports when the application owns the data](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embedding-content/).
+### Power BI Setup
+To work with the Power BI API, we need to set up both an Azure AD user and an Application (as of this post, the Power BI API does not support Azure style service tokens). I'll refer to these as the User Principle and Application Principle to help keep them straight. Additionally, while this repository provides its own walkthrough, you can find additional information/details by going to the official documentation. Two links I've found most useful are the [Embedded dashboards (for developers)](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embed-sample-app-owns-data/) and [Embedding reports when the application owns the data](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embedding-content/).
 
 First, we need to create an [Azure AD User Principle (username/password)](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-embedding-content/#step-1-setup-your-embedded-analytics-development-environment). For this we'll need an Active Directory Tenant. If you have a subscription to Azure or Office 365, you already have one. But you'll also need administrative access since we need to create a new user ID in that tenant. 
 
 The simplest way IMHO to do this is to create a new Azure AD tenant in Azure, and put your user in there. Yeah, it may have some funky @onmicrosoft.com domain, but since this user will only be used to programmatically access the API, that's fine. Once the user has been created, use it to log in at [PowerBI.com](https://www.powerbi.com). Then you can enable its free, 60 day trial subscription to PowerBI Pro. For developers, you can repeat this process (creating a new user and a new free trial) every 60 days. But for production you'll want to purchase a paid subscription. The documentation calls this an "Application Master User Account", as I mentioned, I'll just call this our User Principle. 
 
-Once created, save the username and password as we'll need to use those to configure the application settings. 
+The next step is to [create the Application Principle and give it the proper permissions](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-register-app/) using the same Azure AD tenant that holds the User Principle. For this project, we'll create a Server-side Web App and give it a a redirect URL of http://localhost:13526/redirect. The home page url will just be http://localhost:13526. When it comes to permissions, give the application the appropriate permissions (all of them if you're going to use all this project's API methods) and finish registering the application. 
 
-The next step is to [create the Application and give it the proper permissions](https://powerbi.microsoft.com/en-us/documentation/powerbi-developer-register-app/) using the same Azure AD tenant that holds our User Principle. For this project, we'll create a Server-side Web App and give it a a redirect URL of http://localhost:13526/redirect. The home page url will just be http://localhost:13526. When it comes to permissions, give the application the appropriate permissions (all of them if you're going ot use all this project's API methods) and finish registering the application. 
+Note: be sure to snag the client ID and client secret after you register the application. We'll need those when setting up the project's environment. Also don't forget to "apply permissions" so that all users in the tenant are allowed to use the application.
 
-Note: be sure to snag the client ID and client secret. We'll need those when setting up the project's environment. Also don't forget to "apply permissions" so that all users in the tenant are allowed to use the application.
+### Storage Account and template reports
+If you're going to leverage the "add report" method of this project, you'll want to create an Azure Storage Account. In that account create a blob container into which any Power BI PBIX files will be placed. Then, using your favorite storage exploration tool, upload the sample PBIX files that are provided in the assets folder of this repository. 
 
-If you're going to leverage the "add report" method of this project, you'll want to create an Azure Storage Account. In that account you'll want to create a blob container into which any Power BI PBIX files will be placed. Then, using your favorite storage exploration tool, upload the sample PBIX files that are provided in the assets folder of this repository. 
+### A SQL based database
+To properly leverage the full power of the API, you're also going to need to create an Azure SQL Database instance and a SQL Server which will be exposed via the [Power BI data gateway](https://powerbi.microsoft.com/en-us/gateway/). I found it easy to create an Azure hosted SQL Server virtual machine and install the data gateway there. 
 
-To properly leverage the full power of the API, you're also going to need to create an Azure SQL Database instance and a SQL Server which will be exposed via the [Power BI data gateway](https://powerbi.microsoft.com/en-us/gateway/). 
+Be sure to secure the database to prevent remote access except from where needed, either from your local machine's IP address, or Azrue Services. The database management API methods will attempt connect directly to the database. But PowerBI will use a data gateway. The Power BI data gateway is based on Service Bus Hybrid Connections, so please refer to [that documentation for a complete list of required ports](https://docs.microsoft.com/en-us/azure/biztalk-services/integration-hybrid-connection-overview#security-and-ports). 
 
 
 ## Setting up the project
