@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "PowerBIMultitenantSample",
-		"_postman_id": "6c83ad94-bce3-af41-8806-767509e73b58",
+		"_postman_id": "dd84fa0f-e245-b4ee-742e-65d9632a2a79",
 		"description": "Testing methods to interact with the PowerBI Multitenant Demo Functions Application. ",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -31,7 +31,10 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": ""
 			},
 			"response": []
@@ -218,7 +221,10 @@
 				},
 				"method": "DELETE",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": "Removes a report and its datasets"
 			},
 			"response": []
@@ -250,7 +256,10 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": "Gets the embedded settings for a report"
 			},
 			"response": []
@@ -281,7 +290,10 @@
 				},
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"description": "Get a list of reports in a Workspace"
 			},
 			"response": []

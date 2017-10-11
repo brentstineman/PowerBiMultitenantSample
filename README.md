@@ -3,6 +3,16 @@ A sample solution for doing multi-tenant PowerBI report management.
 
 This project uses a collection of Azure Functions to illustrate common tasks when dealing with Power BI report management. Tasks such as importing reports, creating app workspaces, and changing report connection details. Its part of a larger effort to highlight a way of dealing with multi-tenancy challenges when using PowerBi Embedded reports in applications.
 
+The intent of this project is to provide an easily reusable APi that you can leverage as part of your own applications. Hopefully, most of the code can simply be deployed and used "as is", but you are welcome to just copy the code you need for your specific implementation. 
+
+##  The Approach
+If you are building a multi-tenant web application and want to use PowerBI reports to show your end users data, you will quickly realize you have a challenge in ensuring that your reports only display the data appropriate to the user. Currently, PowerBI does not easily support this, so you are stuck keeping multiple copies of each report.  
+
+This solution is based on the ability to change the conneciton details of reports that leverage live query and either SQL Server (via a data gateway) or Azure SQL DB. The overall approach is that each organization/tenant that's using your application would have its own Power BI App Workspace. In these app workspaces would be reports with connection details specific to the tenant. Be by connecting to seperate databases, or leveraging row level filtering and a tenant specific username/password. 
+
+The API created by this function allows you to create workspaces, import template PBIX files into those workspaces, and update the report connection details. Thus making this approach to tenant report management easily reusable. Additionally, the API includes a few methods to help manage databases (either in SQL Server of SQL DB) as well as a few supporting methods (get workspaces, get reports, get embedded report details).
+
+## API Overview
 These functions have been implemented in a way to create a API footprint. These API methods are as follows:
 
 Post /api/workspace : creates a new app workspace
@@ -43,7 +53,9 @@ The next step is to [create the Application and give it the proper permissions](
 
 Note: be sure to snag the client ID and client secret. We'll need those when setting up the project's environment. Also don't forget to "apply permissions" so that all users in the tenant are allowed to use the application.
 
-Last, but not least, if you're going to leverage the "add report" method of this project, you'll want to create an Azure Storage Account. In that account you'll want to create a blob container into which any Power BI PBIX files will be placed. Then, using your favorite storage exploration tool, upload the sample PBIX files that are provided in the assets folder of this repository. 
+If you're going to leverage the "add report" method of this project, you'll want to create an Azure Storage Account. In that account you'll want to create a blob container into which any Power BI PBIX files will be placed. Then, using your favorite storage exploration tool, upload the sample PBIX files that are provided in the assets folder of this repository. 
+
+To properly leverage the full power of the API, you're also going to need to create an Azure SQL Database instance and a SQL Server which will be exposed via the [Power BI data gateway](https://powerbi.microsoft.com/en-us/gateway/). 
 
 
 ## Setting up the project
@@ -77,14 +89,19 @@ Once the project builds successfully, we then need to configure it by setting up
 
 **powerbi_password** - The password associated with the powerbi\_user identity. 
 
-
-    
-
 ## Working with the API
 To make working with the API easier, especially when just trying to learn what its doing. I've created a [Postman](https://www.getpostman.com/) collection (PowerBIMultitenantSample.postman_collection.json) and exported it to this repository. This collection uses variables that should be defined in a cooresponding Postman environment (PowerBIMultitenantSample-Local.postman_environment.json). A sample environment file, to outline what values should be provided, has also been placed in the repository.
 
-To use these files, simply install Postman and import the collection and environment files. Once imported, you'll need to customize the collection which will supply the variables used by the collection's methods. 
+To use these files, simply install Postman and import the collection and environment files. Once imported, you'll need to customize the environment settings which will supply the variables used by the collection's methods. 
 
 For more on Postman environments and variables, please see [https://www.getpostman.com/docs/postman/environments_and_globals/manage_environments]
 
+With the project running either locally or deployed to Azure, and your collections properly configured, you're ready to start testing out the API. 
 
+Most of the API methods in the Postman collection use query string parameters that are set in the imported environment. However, there are others that contain a JSON body that provides further details. When working with the API, pay close attention to the environment parameters. Values like App Workspace names, IDs, report IDs, etc... are specific to not only your test environment but also to individual test runs. 
+
+When you're ready to execute an end to tend test, the expectation is that you'd perform the following API calls in the order provided: create database, create app workspace, import report, update database
+
+Upon completion, you can log into PowerBI.com using the same username/password you created for the application and you should be able to view all workspaces and reports. This also gives you an easy way to check and make sure that the reports are properly rendering based on the target dataset. 
+
+Its important to note that once a workspace has been created, it cannot be removed. So its recommended that use a single workspace for repeated testing. You can remove the report/dataset via the Portal, us use the API to "clean up" the workspace between test runs. 
